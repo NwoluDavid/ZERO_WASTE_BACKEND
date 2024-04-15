@@ -1,5 +1,7 @@
 import secrets
 from typing import Annotated, Any, Literal
+from typing import Optional
+
 
 from pydantic import (
     AnyUrl,
@@ -31,8 +33,7 @@ class Settings(BaseSettings):
         list[AnyUrl] | str, BeforeValidator(parse_cors)
     ] = []
     
-    ALGORITHM: str = "HS256"
-    
-    
+    ALGORITHM: str = "HS256"  
 
-settings = Settings()  # type: ignore
+
+settings = Settings()

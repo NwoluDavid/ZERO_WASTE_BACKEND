@@ -13,8 +13,9 @@ router=APIRouter()
 
 @router.post("/login")
 async def login(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], 
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Annotated[Session, Depends(get_db)]
+     
 ):
     # get user by email
     user = crud.authenticate(

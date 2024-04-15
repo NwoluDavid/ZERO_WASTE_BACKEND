@@ -6,6 +6,8 @@ from fastapi import Depends, HTTPException, status
 from app.utils import verify_token_access
 from app.models import User
 from fastapi.security import OAuth2PasswordBearer
+from typing import Optional
+
 
 
 reusable_oauth2 = OAuth2PasswordBearer(
@@ -28,3 +30,4 @@ def get_current_user(session: SessionDep, token: TokenDep) -> User:
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
+
