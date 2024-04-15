@@ -9,10 +9,17 @@ import app.crud
 from datetime import timedelta
 from app.config import settings
 from fastapi import APIRouter
-from .routes import items, login, users, test_token
+from .routes import items, login, users, test_token ,booking
+from sqlalchemy.orm import registry
+
+
+
+# Define your models and relationships
+
 
 api_router = APIRouter()
-api_router.include_router(login.router, tags=["login"])
+api_router.include_router(login.router, tags=["users"])
 api_router.include_router(users.router, prefix="/users", tags=["users"])
+api_router.include_router(booking.router, prefix="/bad", tags=["Waste"])
 api_router.include_router(test_token.router, prefix="/utils", tags=["utils"])
-api_router.include_router(items.router, prefix="/items", tags=["items"])
+
