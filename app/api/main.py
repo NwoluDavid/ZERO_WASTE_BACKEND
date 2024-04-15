@@ -19,7 +19,7 @@ from sqlalchemy.orm import registry
 
 api_router = APIRouter()
 api_router.include_router(login.router, tags=["users"])
-api_router.include_router(users.router, prefix="/users", tags=["users"])
-api_router.include_router(booking.router, prefix="/bad", tags=["Waste"])
+api_router.include_router(users.router, prefix="/users", tags=["Users"])
+api_router.include_router(booking.router, prefix="/booking", tags=["Waste"])
 api_router.include_router(test_token.router, prefix="/utils", tags=["utils"])
 

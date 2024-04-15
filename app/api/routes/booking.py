@@ -18,10 +18,11 @@ async def booking(waste: Booking,db: Annotated[Session,  Depends(get_db)], user:
     db.commit()
     db.refresh(waste_create)
     return waste_create
-    
+  
 
 @router.on_event("startup")
 async def startup_event():
     mapper_registry.configure()
     
-    
+  
+  
