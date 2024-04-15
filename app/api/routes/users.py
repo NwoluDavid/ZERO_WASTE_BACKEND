@@ -9,10 +9,14 @@ from datetime import timedelta
 from app.config import settings
 from app.crud import update_user, get_user_by_id, delete_user
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import registry
+
+
+mapper_registry = registry()
 
 router = APIRouter()
 
-@router.post("/register", tags=["login"])
+@router.post("/register")
 async def register(
     user: UserCreate, 
     db: Annotated[Session,  Depends(get_db)]
@@ -29,6 +33,11 @@ async def register(
     db.commit()
     db.refresh(new_user)
     return user
+
+
+@router.on_event("startup")
+async def startup_event():
+    mapper_registry.configure()
 
 @router.get("/profile/{user_id}")
 def get_user_profile(user_id: int, current_user: int = Depends(get_current_user), db: Session = Depends(get_db)):
