@@ -92,8 +92,11 @@ class ReviewBase(SQLModel):
     comment: str
 
 class Review(ReviewBase, table=True):
-    id: int = Field(default=None, primary_key=True)
+    id: Optional [int] = Field(default=None, primary_key=True)
     user_id: int | None = Field(default=None, foreign_key="user.id")
+
+class ForgetPasswordRequest(SQLModel):
+    email: str
      
 
 
