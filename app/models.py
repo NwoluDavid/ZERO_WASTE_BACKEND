@@ -12,7 +12,7 @@ class UserCreate(SQLModel):
     display_name:str = Field(min_length=3, max_length=50, description="Name of the User", schema_extra={'example': "John Doe"}, title="Name")  # noqa
     email: EmailStr = Field(sa_column=Column("email", VARCHAR, unique=True, index=True), description="Email of the user",schema_extra={'example': "dave@example.com"})
     phone_number: PhoneNumber = Field(description="Phone number of the user", title="Phone Number" ,schema_extra={'example': "+2348103896344"})  # noqa
-    password: str = Field(min_length=8, max_length=100, description="Password of the user",title="Password" , schema_extra={'example': "Dante@123"})  # noqa        
+    password: str = Field(min_length=8, max_length=100, description="Password of the user",title="Password" , schema_extra={'example': "Dante@123"})  # noqa       
     class Config:
         orm_mode = True
 class User(UserCreate, table=True):
@@ -32,7 +32,7 @@ class TokenData(SQLModel):
     sub: int | None = None
 
 class UserOutput(SQLModel):
-    id: int
+    id: int = None
     display_name: str
     email: EmailStr
     phone: PhoneNumber
@@ -45,7 +45,12 @@ class WasteType(str, Enum):
 class Amount(int, Enum):
     house_hold= 1000
     industrial = 10000
-    organizational = 50000    
+    organizational = 50000 
+    
+class BookingStatus(str, Enum):
+    pending ="PENDING"
+    in_transit ="IN TRANSIT"
+    delivered ="DELIVERED"   
     
 class Booking (SQLModel):
     first_name:str
@@ -56,6 +61,7 @@ class Booking (SQLModel):
     waste_type:WasteType 
     user_waste: Optional[str]=None
     amount: Amount
+    order_status: BookingStatus
     # user_id: int | None = Field(default=None, foreign_key="user.id")
     class Config:
         orm_mode = True
@@ -87,6 +93,7 @@ class ReviewBase(SQLModel):
 
 class Review(ReviewBase, table=True):
     id: Optional [int] = Field(default=None, primary_key=True)
+    user_id: int | None = Field(default=None, foreign_key="user.id")
 
 class ForgetPasswordRequest(SQLModel):
     email: str
