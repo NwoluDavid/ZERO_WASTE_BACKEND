@@ -39,3 +39,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
+def send_password_reset_email(email: str):
+    # Implement logic to send password reset email
+    pass  # Placeholder implementation
+
