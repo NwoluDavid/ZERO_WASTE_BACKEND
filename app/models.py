@@ -9,10 +9,10 @@ from sqlalchemy.orm import registry
 
 
 class UserCreate(SQLModel):
-    display_name:str = Field(min_length=3, max_length=50, description="Name of the User", schema_extra={'example': "A very nice Item"}, title="Name")  # noqa
-    email: EmailStr = Field(sa_column=Column("email", VARCHAR, unique=True, index=True), description="Email of the passenger",)
-    phone_number: PhoneNumber = Field(description="Phone number of the passenger", title="Phone Number")  # noqa
-    password: str = Field(min_length=8, max_length=100, description="Password of the passenger",title="Password")  # noqa        
+    display_name:str = Field(min_length=3, max_length=50, description="Name of the User", schema_extra={'example': "John Doe"}, title="Name")  # noqa
+    email: EmailStr = Field(sa_column=Column("email", VARCHAR, unique=True, index=True), description="Email of the user",schema_extra={'example': "dave@example.com"})
+    phone_number: PhoneNumber = Field(description="Phone number of the user", title="Phone Number" ,schema_extra={'example': "+2348103896344"})  # noqa
+    password: str = Field(min_length=8, max_length=100, description="Password of the user",title="Password" , schema_extra={'example': "Dante@123"})  # noqa        
     class Config:
         orm_mode = True
 class User(UserCreate, table=True):
@@ -20,8 +20,8 @@ class User(UserCreate, table=True):
     waste: list["Waste"] = Relationship(back_populates="user")
     
 class UserLogin(SQLModel):
-    email: EmailStr = Field(description="Email of the passenger",)
-    password: str = Field(min_length=8, max_length=100, description="Password of the passenger",title="Password")  # noqa
+    email: EmailStr = Field(description="Email of the user",)
+    password: str = Field(min_length=8, max_length=100, description="Password of the user",title="Password")  # noqa
     
 class Token(SQLModel):
     access_token: str
@@ -60,6 +60,8 @@ class Booking (SQLModel):
     class Config:
         orm_mode = True
 
+
+# This model is for booking wastes disposal
 class Waste(Booking,table=True):
     id:  Optional[int] = Field(default=None, primary_key=True)
     user_id: int | None = Field(default=None, foreign_key="user.id")
@@ -72,10 +74,10 @@ class Waste(Booking,table=True):
     
 
 class UserUpdate(SQLModel):
-    display_name:str = Field(min_length=3, max_length=50, description="Name of the User", schema_extra={'example': "A very nice Item"}, title="Name")  # noqa
-    email: EmailStr = Field(sa_column=Column("email", VARCHAR, unique=True, index=True), description="Email of the passenger",)
-    phone_number: PhoneNumber = Field(description="Phone number of the passenger", title="Phone Number")  # noqa
-    password: str = Field(min_length=8, max_length=100, description="Password of the passenger",title="Password")  # noqa
+    display_name:str = Field(min_length=3, max_length=50, description="Name of the User", schema_extra={'example': "John Doe"}, title="Name")  # noqa
+    email: EmailStr = Field(sa_column=Column("email", VARCHAR, unique=True, index=True), description="Email of the user",schema_extra={'example': "dave@example.com"})
+    phone_number: PhoneNumber = Field(description="Phone number of the user", title="Phone Number" ,schema_extra={'example': "+2348103896344"})  # noqa
+    password: str = Field(min_length=8, max_length=100, description="Password of the user",title="Password" , schema_extra={'example': "Dante@123"})  # noqa    # noqa
 
 
 class ReviewBase(SQLModel):
