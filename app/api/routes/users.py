@@ -52,29 +52,31 @@ async def startup_event():
     mapper_registry.configure()
 
 @router.get("/profile/{user_id}")
-def get_user_profile(user_id: int, current_user: int = Depends(get_current_user), db: Session = Depends(get_db)):
+def user_profile(user_id: int, current_user: int = Depends(get_current_user), db: Session = Depends(get_db)):
     user = get_user_by_id(db, user_id)
     if not user:   
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
 @router.patch("/profile/{user_id}")
-def update_user_profile_patch(user_id: int, user_data: UserUpdate, current_user: int = Depends(get_current_user), db: Session = Depends(get_db)):
+def user_profile(user_id: int, user_data: UserUpdate, current_user: int = Depends(get_current_user), db: Session = Depends(get_db)):
     updated_user = update_user(db, user_id, user_data)
     if not updated_user:
         raise HTTPException(status_code=404, detail="User not found")
     return updated_user
 
 @router.put("/profile/{user_id}")
-def update_user_profile(user_id: int, user_data: UserUpdate, current_user: int = Depends(get_current_user), db: Session = Depends(get_db)):
+def user_profile(user_id: int, user_data: UserUpdate, current_user: int = Depends(get_current_user), db: Session = Depends(get_db)):
     updated_user = update_user(db, user_id, user_data)
     if not updated_user:
         raise HTTPException(status_code=404, detail="User not found")
     return updated_user
 
 @router.delete("/profile/{user_id}")
-def delete_user_profile(user_id: int, current_user: int = Depends(get_current_user), db: Session = Depends(get_db)):
+def user_profile(user_id: int, current_user: int = Depends(get_current_user), db: Session = Depends(get_db)):
     deleted_user = delete_user(db, user_id)
     if not deleted_user:
         raise HTTPException(status_code=404, detail="User not found")
     return {"message": "User deleted successfully"}
+
+
