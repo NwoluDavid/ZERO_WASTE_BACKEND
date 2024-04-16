@@ -23,9 +23,7 @@ async def register(
     user: UserCreate, 
     db: Annotated[Session,  Depends(get_db)]
 ):
-    """ this user registration route, take not to put a valid phonenumber start with the country code
-        password is validated, must have at lest 1 uppercase letter,digits, and 1 special character, must be at lest 8
-        characters.
+    """ this user registration route, take note  to put a valid phonenumber, start with the country code of the phonenumber.
     """
     try:
         #hash the password 
