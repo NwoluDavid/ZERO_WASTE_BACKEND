@@ -41,7 +41,7 @@ def reviews_by_user_route(current_user: User = Depends(get_current_user), db: Se
 
 
 # Delete a review by ID
-@router.delete("/reviews/{review_id}/", status_code=204 , status_code =200)
+@router.delete("/reviews/{review_id}/", status_code=204 )
 def review_route(review_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     # Check if the current user is authenticated
     if not current_user:
