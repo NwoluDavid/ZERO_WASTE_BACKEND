@@ -12,6 +12,8 @@ from sqlalchemy.orm import registry
 from sqlalchemy.exc import IntegrityError
 from fastapi.responses import JSONResponse
 from app.schemas import SignUpModel
+from fastapi.encoders import jsonable_encoder
+
 
 
 mapper_registry = registry()
@@ -59,7 +61,8 @@ async def register(
         error_message = "An error occurred while creating the user."    
         raise HTTPException(status_code=500, detail=error_message)
     # return { status_code= "message": "User created successfully"}
-    return JSONResponse(status_code =201, content={"data": new_user.model_dump() , "message": "user created successfully"})
+    new_user =jsonable_encoder(new_user)
+    return JSONResponse(status_code =201, content={"data": new_user , "message": "user created successfully"})
 
 
 @router.on_event("startup")

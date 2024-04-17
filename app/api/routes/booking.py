@@ -5,7 +5,7 @@ from app.deps import get_db, get_current_user
 from app.models import Booking, Waste , User , UserCreate , UserLogin
 from typing import Annotated
 from sqlalchemy.orm import registry
-# from app.deps import verify_token
+from fastapi.encoders import jsonable_encoder
 
 
 mapper_registry = registry()
@@ -30,7 +30,13 @@ async def booking(waste: Booking, db: Annotated[Session,  Depends(get_db)], curr
     db.add(waste_create)
     db.commit()
     db.refresh(waste_create)
+    
+    waste_create =jsonable_encoder(waste_create)
+    
     return waste_create
+
+
+
     # waste_create.user = user
 @router.on_event("startup")
 async def startup_event():
