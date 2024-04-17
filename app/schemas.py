@@ -12,3 +12,5 @@ class SignUpModel(BaseModel):
     
     class config:
         orm_mode =True
+
+
