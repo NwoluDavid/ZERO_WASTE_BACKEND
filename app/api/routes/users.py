@@ -11,6 +11,8 @@ from app.crud import update_user, get_user_by_id, delete_user
 from sqlalchemy.orm import registry
 from sqlalchemy.exc import IntegrityError
 from fastapi.responses import JSONResponse
+from app.schemas import SignUpModel
+from fastapi.encoders import jsonable_encoder
 
 
 
@@ -26,6 +28,21 @@ async def register(
 ):
     """ this user registration route, take note  to put a valid phonenumber, start with the country code of the phonenumber.
     """
+    db_email =db.query(User).filter(User.email ==user.email).first()
+    
+    if db_email is not None:
+        return  HTTPException(status_code = status.HTTP_400_BAD_REQUEST, 
+            detail="User with the email already exists"
+        )
+    
+    db_username =db.query(User).filter(User.display_name == user.display_name).first()
+      
+    if db_email is not None:
+        return  HTTPException(status_code = status.HTTP_400_BAD_REQUEST, 
+            detail="User with the email already exists"
+        )
+     
+        
     try:
         #hash the password 
         user.password = get_password_hash(user.password)
@@ -45,7 +62,8 @@ async def register(
         error_message = "An error occurred while creating the user."    
         raise HTTPException(status_code=500, detail=error_message)
     # return { status_code= "message": "User created successfully"}
-    return JSONResponse(status_code =201, content={"data": new_user.model_dump() , "message": "user created successfully"})
+    new_user =jsonable_encoder(new_user)
+    return JSONResponse(status_code =201, content={"data": new_user , "message": "user created successfully"})
 
 
 @router.on_event("startup")
