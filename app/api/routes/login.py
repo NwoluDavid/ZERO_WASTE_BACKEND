@@ -27,14 +27,24 @@ async def login(
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    return { 
-        "User": UserOutput(
-            display_name=user.display_name,
-            email=user.email,
-            phone=user.phone_number,),
-            
-        "Token": Token(
+    return Token(
         access_token=create_access_token(
             user.id, expires_delta=access_token_expires
-        )
-    )}
+        ),
+        display_name=user.display_name,
+        email=user.email,
+        phone=user.phone_number,
+        
+    )
+    
+    
+ 
+        # "User": UserOutput(
+        #     display_name=user.display_name,
+        #     email=user.email,
+        #     phone=user.phone_number,),
+            
+        # "Token": Token(
+        # access_token=create_access_token(
+        #     user.id, expires_delta=access_token_expires
+        # )

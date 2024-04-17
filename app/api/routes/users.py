@@ -11,7 +11,7 @@ from app.crud import update_user, get_user_by_id, delete_user
 from sqlalchemy.orm import registry
 from sqlalchemy.exc import IntegrityError
 from fastapi.responses import JSONResponse
-
+from app.schemas import SignUpModel
 
 
 mapper_registry = registry()
@@ -25,6 +25,21 @@ async def register(
 ):
     """ this user registration route, take note  to put a valid phonenumber, start with the country code of the phonenumber.
     """
+    db_email =db.query(User).filter(User.email ==user.email).first()
+    
+    if db_email is not None:
+        return  HTTPException(status_code = status.HTTP_400_BAD_REQUEST, 
+            detail="User with the email already exists"
+        )
+    
+    db_username =db.query(User).filter(User.display_name == user.display_name).first()
+      
+    if db_email is not None:
+        return  HTTPException(status_code = status.HTTP_400_BAD_REQUEST, 
+            detail="User with the email already exists"
+        )
+     
+        
     try:
         #hash the password 
         user.password = get_password_hash(user.password)

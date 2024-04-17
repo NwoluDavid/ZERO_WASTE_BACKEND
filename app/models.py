@@ -15,6 +15,7 @@ class UserCreate(SQLModel):
     password: str = Field(min_length=8, max_length=100, description="Password of the user",title="Password" , schema_extra={'example': "Dante@123"})  # noqa       
     class Config:
         orm_mode = True
+    
 class User(UserCreate, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     waste: list["Waste"] = Relationship(back_populates="user")
@@ -26,6 +27,9 @@ class UserLogin(SQLModel):
 class Token(SQLModel):
     access_token: str
     token_type: str = "bearer"
+    display_name: str
+    email: str
+    phone : str
 
 
 class TokenData(SQLModel):
