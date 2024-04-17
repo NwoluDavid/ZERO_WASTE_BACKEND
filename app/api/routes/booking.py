@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from fastapi.security import OAuth2PasswordBearer
 from sqlmodel import Session, select 
 from app.deps import get_db, get_current_user
-from app.models import Booking, Waste , User , UserCreate , UserLogin
+from app.models import Booking, Waste , User 
 from typing import Annotated
 from sqlalchemy.orm import registry
 from fastapi.encoders import jsonable_encoder
@@ -18,7 +18,13 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 @router.post("/booking" , status_code =201 )
 async def booking(waste: Booking, db: Annotated[Session,  Depends(get_db)], current_user: Annotated[User, Depends(get_current_user)],  token: str = Depends(oauth2_scheme) ):
     
-
+    """ This is the booking route , if first check if a user is authorised before the user can place a booking.
+        if the user us not authorised , you will receive a 401 error saying not unauthenticated.
+        for successful booking the user will receive a message booking successful with a status code of 
+        201 created.
+        
+    
+    """
     if not current_user:
         raise HTTPException(status_code=401, detail="Unauthenticated")
     
