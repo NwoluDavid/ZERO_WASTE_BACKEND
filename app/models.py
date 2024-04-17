@@ -1,5 +1,5 @@
 from sqlmodel import SQLModel, Field, Column, VARCHAR ,Relationship ,Enum
-from pydantic import EmailStr 
+from pydantic import EmailStr, BaseModel
 from pydantic_extra_types.phone_numbers import PhoneNumber
 from typing import Optional , List
 from datetime import date
@@ -89,7 +89,6 @@ class Waste(Booking,table=True):
     user: User | None = Relationship(back_populates="waste")
     
         
-    
 
 class UserUpdate(SQLModel):
     display_name:str = Field(min_length=3, max_length=50, description="Name of the User", schema_extra={'example': "John Doe"}, title="Name")  # noqa
@@ -107,8 +106,14 @@ class Review(ReviewBase, table=True):
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
     user_id: uuid.UUID|None = Field(default=None, foreign_key="user.id")
 
-class ForgetPasswordRequest(SQLModel):
+class forgotpassword(BaseModel):
     email: str
+
+class resetpassword(BaseModel):
+    email: str
+    new_password: str
+    confirm_password: str 
+     
      
 
 

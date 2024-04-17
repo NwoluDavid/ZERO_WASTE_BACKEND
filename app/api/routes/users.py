@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlmodel import Session, select
 from app.deps import get_db, get_current_user
-from app.models import UserCreate, User, UserLogin, Token, UserOutput,UserUpdate
+from app.models import UserCreate, User, UserLogin, Token, UserOutput,UserUpdate, forgotpassword,resetpassword
 from typing import Annotated, Any
 from fastapi.security import OAuth2PasswordRequestForm
 from app.utils import get_password_hash, verify_password, create_access_token
@@ -13,6 +13,7 @@ from sqlalchemy.exc import IntegrityError
 from fastapi.responses import JSONResponse
 from app.schemas import SignUpModel
 from fastapi.encoders import jsonable_encoder
+
 
 
 
@@ -70,7 +71,7 @@ async def startup_event():
     mapper_registry.configure()
 
 @router.get("/profile/{user_id}")
-def user_profile(user_id: int, current_user: int = Depends(get_current_user), db: Session = Depends(get_db)):
+def user_profile(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     user = get_user_by_id(db, user_id)
     if not user:   
         raise HTTPException(status_code=404, detail="User not found")
@@ -97,4 +98,20 @@ def user_profile(user_id: int, current_user: int = Depends(get_current_user), db
         raise HTTPException(status_code=404, detail="User not found")
     return {"message": "User deleted successfully"}
 
+@router.post("/profile/forgot_password")
+async def forgot_password(request_body: forgotpassword):
+    email = request_body.email
+     # Check if the user with the provided email exists in the database
+    user = await User.get_user_by_email(email)
+    if user is None:
+        # If user does not exist, raise HTTPException with 404 status code
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    
+    return {"message": "Password reset instructions sent to " + email}
 
+@router.post("/profile/reset_password")
+async def reset_password(request_body: resetpassword):
+    email = request_body.email
+    
+    return {"message": "Password reset successful " + email}
