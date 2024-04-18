@@ -23,13 +23,10 @@ class User(UserCreate, table=True):
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
     waste: list["Waste"] = Relationship(back_populates="user")
 
-
-
     
 class UserLogin(SQLModel):
     email: EmailStr = Field(description="Email of the user",)
     password: str = Field(min_length=8, max_length=100, description="Password of the user",title="Password")  # noqa
-    
     
     
 class Token(SQLModel):
@@ -87,8 +84,6 @@ class Waste(Booking,table=True):
     id:  Optional[uuid.UUID ] = Field(default_factory=uuid.uuid4, primary_key=True)
     user_id: uuid.UUID | None = Field(default_factory=uuid.uuid4, foreign_key="user.id")
     user: User | None = Relationship(back_populates="waste")
-    
-        
     
 
 class UserUpdate(SQLModel):

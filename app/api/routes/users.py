@@ -86,28 +86,36 @@ def user_profile ( current_user: int = Depends(get_current_user), db: Session = 
     return jsonable_encoder(user)
 
 
-
 @router.patch("/profile")
-def user_profile(user_id: int, user_data: UserUpdate, current_user: int = Depends(get_current_user), db: Session = Depends(get_db)):
-    updated_user = update_user(db, user_id, user_data)
-    if not updated_user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return updated_user
-
-@router.put("/profile")
 def user_profile(user_data: UserUpdate, current_user: int = Depends(get_current_user), db: Session = Depends(get_db)):
-    if not  current_user:
-        raise HTTPException(status_code=404, detail="User not found")
+    if not current_user:
+    # updated_user = update_user(db, user_id, user_data)
+    # if not updated_user:
+        raise HTTPException(status_code=404, detail="User not authenticated")
     user_data = User(**user_data.model_dump())
     db.add(user_data)
     db.commit()
     db.refresh(user_data)
-    # return user_data
+    return user_data
+
+@router.put("/profile")
+def user_profile(user_data: UserUpdate, current_user: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    if not  current_user:
+        raise HTTPException(status_code=404, detail="User not authenticated")
+    user_data = User(**user_data.model_dump())
+    db.add(user_data)
+    db.commit()
+    db.refresh(user_data)
+    return user_data
 @router.delete("/profile")
-def user_profile(user_id: int, current_user: int = Depends(get_current_user), db: Session = Depends(get_db)):
-    deleted_user = delete_user(db, user_id)
-    if not deleted_user:
-        raise HTTPException(status_code=404, detail="User not found")
+def user_profile(user_data: UserUpdate, current_user: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    if not  current_user:
+        raise HTTPException(status_code=404, detail="User not authenticated")
+    # user_data = User(**user_data.model_dump())
+
+    # deleted_user = delete_user(db, current_user.user_id)
+    # if not deleted_user:
+    #     raise HTTPException(status_code=404, detail="User not found")
     return {"message": "User deleted successfully"}
 
 
