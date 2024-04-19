@@ -25,6 +25,7 @@ async def booking(
     
     waste = waste.model_dump()
     waste["user_id"] = current_user.id
+    Waste.user = current_user.id
     waste_create = Waste(**waste)
     db.add(waste_create)
     db.commit()
@@ -49,3 +50,5 @@ async def get_bookings_by_user(
 @router.on_event("startup")
 async def startup_event():
     pass
+
+
