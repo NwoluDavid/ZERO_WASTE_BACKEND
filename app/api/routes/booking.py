@@ -22,11 +22,13 @@ async def booking(
     """
     if not current_user:
         raise HTTPException(status_code=401, detail="Unauthorized")
+    user =current_user
     
     waste = waste.model_dump()
     waste["user_id"] = current_user.id
-    Waste.user = current_user.id
     waste_create = Waste(**waste)
+    waste_create.user = user
+    
     db.add(waste_create)
     db.commit()
     db.refresh(waste_create)
