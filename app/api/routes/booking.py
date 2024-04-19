@@ -50,3 +50,5 @@ async def get_bookings_by_user(
 @router.on_event("startup")
 async def startup_event():
     pass
+
+
