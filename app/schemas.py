@@ -31,4 +31,6 @@ class ConnectionConfig(BaseModel):
     MAIL_SSL_TLS: bool = False
     USE_CREDENTIALS: bool = False
     VALIDATE_CERTS: bool = True
+
+
         
