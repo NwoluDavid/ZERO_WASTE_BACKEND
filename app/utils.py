@@ -1,3 +1,4 @@
+
 from datetime import datetime, timedelta
 from typing import Any
 from app.config import settings
@@ -5,7 +6,8 @@ from jose import jwt, JWTError
 from passlib.context import CryptContext
 from app.models import TokenData
 from pydantic import ValidationError
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Depends
+
 
 
 
@@ -39,3 +41,19 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
+def create_reset_password_token(email:str):
+    data={"sub":email , "exp":datetime.utcnow() + timedelta(minutes =10)}
+    token = jwt.encode(data , settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+    return token
+   
+def decode_reset_password_token(token:str):
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+        email:str = payload.get("sub") 
+        return email
+    except JWTError:
+        return None 
+    
+
+# def generate_reset_password_email(email_to:str, email:str, token:str)->EmailData:
+#     project_name = settings.ZEROWASTE  

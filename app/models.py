@@ -106,4 +106,7 @@ class ForgetPasswordRequest(SQLModel):
     email: str
      
 
-
+class ResetForgetPassword(SQLModel):
+    secret_token:str
+    new_password: str
+    confirm_password:str

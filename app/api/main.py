@@ -9,7 +9,7 @@ import app.crud
 from datetime import timedelta
 from app.config import settings
 from fastapi import APIRouter
-from .routes import items, login, users, test_token, reviews ,booking
+from .routes import items, login, users, test_token, reviews ,booking, forget_password
 from sqlalchemy.orm import registry
 
 
@@ -18,6 +18,7 @@ from sqlalchemy.orm import registry
 
 
 api_router = APIRouter()
+api_router.include_router(forget_password.router , prefix="/forgotpassword", tags=["auth"])
 api_router.include_router(users.router, prefix="/users", tags=["Users"])
 api_router.include_router(items.router, prefix="/items", tags=["Items"])
 api_router.include_router(reviews.router, prefix="/reviews", tags=["Reviews"])
