@@ -14,6 +14,9 @@ class UserCreate(SQLModel):
     email: EmailStr = Field(sa_column=Column("email", VARCHAR, unique=True, index=True), description="Email of the user",schema_extra={'example': "dave@example.com"})
     phone_number: PhoneNumber = Field(description="Phone number of the user", title="Phone Number" ,schema_extra={'example': "+2348103896344"})  # noqa
     password: str = Field(min_length=8, max_length=100, description="Password of the user",title="Password" , schema_extra={'example': "Dante@123"})  # noqa       
+    is_staff: Optional[bool]= Field(default =False)
+    is_active:Optional[bool]= Field(default=False)
+
     class Config:
         orm_mode = True
  
@@ -106,4 +109,7 @@ class ForgetPasswordRequest(SQLModel):
     email: str
      
 
-
+class ResetForgetPassword(SQLModel):
+    secret_token:str
+    new_password: str
+    confirm_password:str

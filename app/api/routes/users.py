@@ -46,12 +46,14 @@ async def register(
     try:
         #hash the password 
         user.password = get_password_hash(user.password)
-        new_user = User( 
-            display_name= user.display_name,       
-            email=user.email,
-            email_verified=False,
-            phone_number=user.phone_number.split(":")[1],
-            password=user.password)
+        
+        new_user =User(**user.model_dump())
+        # new_user = User( 
+        #     display_name= user.display_name,       
+        #     email=user.email,
+        #     email_verified=False,
+        #     phone_number=user.phone_number.split(":")[1],
+        #     password=user.password)
         db.add(new_user)
         db.commit()
         db.refresh(new_user)
