@@ -14,8 +14,6 @@ class UserCreate(SQLModel):
     email: EmailStr = Field(sa_column=Column("email", VARCHAR, unique=True, index=True), description="Email of the user",schema_extra={'example': "dave@example.com"})
     phone_number: PhoneNumber = Field(description="Phone number of the user", title="Phone Number" ,schema_extra={'example': "+2348103896344"})  # noqa
     password: str = Field(min_length=8, max_length=100, description="Password of the user",title="Password" , schema_extra={'example': "Dante@123"})  # noqa       
-    is_staff: Optional[bool]= Field(default =False)
-    is_active:Optional[bool]= Field(default=False)
 
     class Config:
         orm_mode = True
@@ -24,7 +22,11 @@ class UserCreate(SQLModel):
     
 class User(UserCreate, table=True):
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
-    waste: list["Waste"] = Relationship(back_populates="user")
+    waste: list["Waste"] = Relationship(back_populates="user")  
+    is_staff: Optional[bool]= Field(default =False)
+    is_active:Optional[bool]= Field(default=False)
+    review: list["Review"] = Relationship(back_populates="user")
+    
 
     
 class UserLogin(SQLModel):
@@ -75,8 +77,6 @@ class Booking (SQLModel):
     pickup_date: date
     waste_type:WasteType 
     user_waste: Optional[str]=None
-    amount: Amount
-    order_status: BookingStatus
    
     class Config:
         orm_mode = True
@@ -84,9 +84,11 @@ class Booking (SQLModel):
 
 # This model is for booking wastes disposal
 class Waste(Booking,table=True):
-    id:  Optional[uuid.UUID ] = Field(default_factory=uuid.uuid4, primary_key=True)
+    id:  Optional[int] = Field(default=None, primary_key=True, index =True)
     user_id: uuid.UUID | None = Field(default_factory=uuid.uuid4, foreign_key="user.id")
     user: User | None = Relationship(back_populates="waste")
+    amount:Optional[Amount]
+    order_status:Optional[BookingStatus]
     
 
 class UserUpdate(SQLModel):
@@ -97,13 +99,18 @@ class UserUpdate(SQLModel):
 
 
 class ReviewBase(SQLModel):
-    reviewer_name: str
-    rating: int
-    comment: str
+    reviewer_name:Optional[str]
+    rating: Optional[int]
+    comment: str = Field(min_length=4, max_length=300, description="User should give their review")
+    
+    class Config:
+        orm_mode = True
 
 class Review(ReviewBase, table=True):
-    id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
+    id: Optional[int] = Field(default=None, primary_key=True, index=True)
     user_id: uuid.UUID|None = Field(default=None, foreign_key="user.id")
+    user: User | None = Relationship(back_populates="review")
+    
 
 class ForgetPasswordRequest(SQLModel):
     email: str
