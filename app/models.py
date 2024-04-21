@@ -78,6 +78,7 @@ class Booking (SQLModel):
     pickup_date:Optional[date]
     waste_type:WasteType = Field(description ="Input the type of waste",schema_extra={"examples": ["Plastic"]})
     user_waste: Optional[str]=None
+    amount:Optional[Amount] =Field(default = 1000)
    
     class Config:
         orm_mode = True
@@ -88,7 +89,6 @@ class Waste(Booking,table=True):
     id:  Optional[int] = Field(default=None, primary_key=True, index =True)
     user_id: uuid.UUID | None = Field(default=uuid.uuid4, foreign_key="user.id")
     user: User | None = Relationship(back_populates="waste")
-    amount:Optional[Amount] =Field(default = 1000)
     order_status:Optional[BookingStatus] = Field(default = "PENDING")
     
 
