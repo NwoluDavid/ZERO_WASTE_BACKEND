@@ -9,11 +9,7 @@ import app.crud
 from datetime import timedelta
 from app.config import settings
 from fastapi import APIRouter
-<<<<<<< HEAD
-from .routes import items, login, users, test_token, reviews ,booking, forget_password ,Admin
-=======
-from .routes import auth, items, login, users, test_token, reviews ,booking
->>>>>>> dev2
+from .routes import items, login, users, test_token, reviews ,booking, auth ,Admin
 from sqlalchemy.orm import registry
 
 
@@ -22,17 +18,11 @@ from sqlalchemy.orm import registry
 
 
 api_router = APIRouter()
-<<<<<<< HEAD
-api_router.include_router(forget_password.router , prefix="/forgotpassword", tags=["Auth"])
+api_router.include_router(auth.router , prefix="/forgotpassword", tags=["Auth"])
 api_router.include_router(users.router, prefix="/users", tags=["User"])
 api_router.include_router(login.router, tags=["User"])
 api_router.include_router(Admin.router, prefix="/admin", tags=["Admin"])
 api_router.include_router(booking.router, prefix="/bookings", tags=["Booking"])
-=======
-api_router.include_router(auth.router , prefix="/forgotpassword", tags=["auth"])
-api_router.include_router(users.router, prefix="/users", tags=["Users"])
-api_router.include_router(items.router, prefix="/items", tags=["Items"])
->>>>>>> dev2
 api_router.include_router(reviews.router, prefix="/reviews", tags=["Reviews"])
 api_router.include_router(items.router, prefix="/items", tags=["Items"])
 api_router.include_router(test_token.router, prefix="/utils", tags=["Utils"])
