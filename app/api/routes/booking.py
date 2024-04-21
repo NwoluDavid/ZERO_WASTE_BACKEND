@@ -12,7 +12,7 @@ from typing import Annotated
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-@router.post("/booking", status_code=201)
+@router.post("/booking", status_code=201, response_model =Waste)
 async def booking(
     waste: Booking,
     db: Session = Depends(get_db),
@@ -20,6 +20,11 @@ async def booking(
 ):
     """ This is the booking route. It first checks if a user is authorized before the user can place a booking.
         If the user is not authorized, a 401 error will be raised.
+        
+        In the type of waste we only have , Plastic, Medical , Organic and Industrial , 
+        ensure to write exactly the way I have written here, in other to get the right status code.
+        
+        
     """
     if not current_user:
         raise HTTPException(status_code=401, detail="Unauthorized")
@@ -36,7 +41,7 @@ async def booking(
     
     return waste_create
 
-@router.get("/bookings", response_model=List[Booking], status_code=200)
+@router.get("/bookings", response_model=List[Waste], status_code=200)
 async def get_bookings_by_user(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
@@ -51,7 +56,7 @@ async def get_bookings_by_user(
     return user_bookings
 
 
-@router.delete("/booking/{booking_id}", status_code=204)
+@router.delete("/booking/{booking_id}", status_code=204 )
 async def delete_booking(
     booking_id: Annotated[int ,Path(discription="Add the booking ID , which is int" , examples="3")],
     current_user: User = Depends(get_current_user),
@@ -76,6 +81,7 @@ async def delete_booking(
     
     db.delete(booking)
     db.commit()
+    
     booking = jsonable_encoder(booking)
     return JSONResponse(
         status_code=200,
@@ -87,7 +93,7 @@ async def delete_booking(
 
 
 
-@router.patch("/booking/{booking_id}", response_model=Booking)
+@router.patch("/booking/{booking_id}", response_model=Waste , status_code = 200)
 async def update_booking(
     booking_id: Annotated[int ,Path(discription="Add the booking ID , which is int" , examples="3")],
     updated_booking: Booking,
@@ -119,15 +125,10 @@ async def update_booking(
     db.commit()
     db.refresh(booking)
     
-    return JSONResponse(
-    status_code=200,
-    content={
-        "message": "Booking deleted successfully",
-        "deleted_booking": booking
-    })
+    return booking
     
 
-@router.put("/booking/{booking_id}", response_model=Booking)
+@router.put("/booking/{booking_id}", response_model=Waste , status_code =200)
 async def replace_booking(
     booking_id: Annotated[int , Path(discription ="Add the booking id, note id is an int", example="3")],
     updated_booking: Booking,
@@ -153,20 +154,13 @@ async def replace_booking(
     
     
     # Delete the existing booking and create a new one with the updated data
-    db.delete(booking)
-    db.flush()
-    updated_booking_data = jsonable_encoder(updated_booking)
-    updated_booking_data["id"] = booking_id
-    new_booking = Waste(**updated_booking_data)
-    db.add(new_booking)
-    db.commit()
+    for field, value in updated_booking.dict().items():
+        setattr(booking, field, value)
     
-    return JSONResponse(
-    status_code=200,
-    content={
-        "message": "Booking deleted successfully",
-        "deleted_booking":new_booking
-    })
+    db.commit()
+    db.refresh(booking)
+    
+    return booking
 
 
 @router.on_event("startup")
