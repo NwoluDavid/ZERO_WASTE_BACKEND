@@ -13,7 +13,7 @@ router = APIRouter()
 
 
 
-@router.post("/reviews", status_code=201)
+@router.post("/review", status_code=201)
 async def create_review(
     comment:Annotated[str | None, Query(max_length=300)],
     reviewer_name:Annotated[str | None , Query(max_length=50)] = None,
@@ -66,7 +66,7 @@ async def create_review(
     return review
     
 # Read reviews made by the current user
-@router.get("/reviews/", response_model=List[Review], status_code=200)
+@router.get("/review/", response_model=List[Review], status_code=200)
 def reviews_by_user_route(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)):
@@ -83,7 +83,7 @@ def reviews_by_user_route(
 
 
 # Update a review by ID , made by the current user.
-@router.put("/reviews/{review_id}/", response_model=Review, status_code=200)
+@router.put("/review/{review_id}/", response_model=Review, status_code=200)
 def review_route( 
     comment:Annotated[str | None, Query(max_length=300)],
     reviewer_name:Annotated[str | None , Query(max_length=50)] = None,
@@ -132,7 +132,7 @@ def review_route(
 
 
 # Delete a review by ID
-@router.delete("/reviews/{review_id}/", status_code=204 )
+@router.delete("/review/{review_id}/", status_code=204 )
 def review_route(review_id: int = Annotated[int |None, Path()], current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     # Check if the current user is authenticated
     

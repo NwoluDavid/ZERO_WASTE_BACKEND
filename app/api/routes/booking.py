@@ -41,7 +41,7 @@ async def booking(
     
     return waste_create
 
-@router.get("/bookings", response_model=List[Waste], status_code=200)
+@router.get("/booking", response_model=List[Waste], status_code=200)
 async def get_bookings_by_user(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
