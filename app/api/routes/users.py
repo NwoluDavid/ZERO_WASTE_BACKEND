@@ -61,6 +61,7 @@ async def register(
         error_message ="Email already exists"
         raise HTTPException(status_code=409, detail=error_message)
     except Exception as e:
+    
         error_message = "An error occurred while creating the user."    
         raise HTTPException(status_code=500, detail=error_message)
     # return { status_code= "message": "User created successfully"}
