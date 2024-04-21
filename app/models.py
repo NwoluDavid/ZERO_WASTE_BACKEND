@@ -120,4 +120,11 @@ class ForgetPasswordRequest(SQLModel):
 class ResetForgetPassword(SQLModel):
     secret_token:str
     new_password: str
-    confirm_password:str
+
+
+class NewPassword(SQLModel):
+    token: str
+    new_password: str
+
+class Message(SQLModel):
+    message: str
