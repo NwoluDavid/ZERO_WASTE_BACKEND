@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status, Query, Header, Request
 from sqlmodel import Session, select
 from app.deps import get_db, get_current_user
 from app.models import UserCreate, User, UserLogin, Token, UserOutput,UserUpdate
@@ -75,7 +75,8 @@ async def startup_event():
 
 
 @router.get("/profile")
-def user_profile ( current_user: int = Depends(get_current_user), db: Session = Depends(get_db)):
+def user_profile (request: Request, current_user: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    headers = request.headers
     
     if not current_user:
         raise HTTPException(status_code=401, detail="Unauthorized")
