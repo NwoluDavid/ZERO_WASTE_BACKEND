@@ -23,8 +23,8 @@ class UserCreate(SQLModel):
 class User(UserCreate, table=True):
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
     waste: list["Waste"] = Relationship(back_populates="user")  
-    is_staff: Optional[bool]= Field(default =False)
-    is_active:Optional[bool]= Field(default=False)
+    is_staff: Optional[bool]= Field(default =True)
+    is_active:Optional[bool]= Field(default=True)
     review: list["Review"] = Relationship(back_populates="user")
     
 
@@ -43,7 +43,7 @@ class Token(SQLModel):
 
 
 class TokenData(SQLModel):
-    sub: uuid.UUID | None = None
+    sub: uuid.UUID | None =None
 
 class UserOutput(SQLModel):
     id: int = None
@@ -87,7 +87,7 @@ class Booking (SQLModel):
 # This model is for booking wastes disposal
 class Waste(Booking,table=True):
     id:  Optional[int] = Field(default=None, primary_key=True, index =True)
-    user_id: uuid.UUID | None = Field(default=uuid.uuid4, foreign_key="user.id")
+    user_id: uuid.UUID | None = Field(default_factory=uuid.uuid4, foreign_key="user.id")
     user: User | None = Relationship(back_populates="waste")
     order_status:Optional[BookingStatus] = Field(default = "PENDING")
     

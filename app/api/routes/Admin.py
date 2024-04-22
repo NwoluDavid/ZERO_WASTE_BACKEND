@@ -93,7 +93,7 @@ async def create_user(
         )
     try:
         user_create = get_password_hash(user_create.password)
-        user = User(**user_create.dict())
+        user = User(**user_create.model_dump())
         db.add(user)
         db.commit()
         db.refresh(user)
