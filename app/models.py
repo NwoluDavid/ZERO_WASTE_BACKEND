@@ -1,10 +1,12 @@
 from sqlmodel import SQLModel, Field, Column, VARCHAR ,Relationship ,Enum
 from pydantic import EmailStr 
+
 from pydantic_extra_types.phone_numbers import PhoneNumber
-from typing import Optional , List
+from typing import Optional
+ 
 from datetime import date  
 from enum import Enum
-from sqlalchemy.orm import registry
+
 import uuid
 
 

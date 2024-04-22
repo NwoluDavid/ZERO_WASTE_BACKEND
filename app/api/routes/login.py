@@ -1,11 +1,15 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Query
-from sqlmodel import Session, select
-from app.deps import get_db, get_current_user
-from app.models import UserCreate, User, UserLogin, Token, UserOutput
-from typing import Annotated, Any
+from fastapi import APIRouter, Depends, HTTPException
+from sqlmodel import Session
+
+from app.deps import get_db
+from app.models import  Token
+
+from typing import Annotated
 from fastapi.security import OAuth2PasswordRequestForm
-from app.utils import get_password_hash, verify_password, create_access_token
+
+from app.utils import create_access_token
 from app import crud
+
 from datetime import timedelta
 from app.config import settings
 
@@ -38,13 +42,14 @@ async def login(
     )
     
     
- 
-        # "User": UserOutput(
-        #     display_name=user.display_name,
-        #     email=user.email,
-        #     phone=user.phone_number,),
-            
-        # "Token": Token(
-        # access_token=create_access_token(
-        #     user.id, expires_delta=access_token_expires
-        # )
+#  some code we might need later
+
+    # "User": UserOutput(
+    #     display_name=user.display_name,
+    #     email=user.email,
+    #     phone=user.phone_number,),
+        
+    # "Token": Token(
+    # access_token=create_access_token(
+    #     user.id, expires_delta=access_token_expires
+    # )

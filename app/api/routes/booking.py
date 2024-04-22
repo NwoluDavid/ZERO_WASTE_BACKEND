@@ -1,12 +1,15 @@
-from fastapi import APIRouter, Depends, HTTPException, status,Query , Path
+from fastapi import APIRouter, Depends, HTTPException,Path
 from fastapi.security import OAuth2PasswordBearer
+
 from sqlmodel import Session
 from app.deps import get_db, get_current_user
+
 from app.models import Booking, Waste, User
 from typing import List
+
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
-import uuid
+
 from typing import Annotated
 
 router = APIRouter()
