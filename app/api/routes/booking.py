@@ -109,7 +109,6 @@ async def delete_booking(
 @router.patch("/booking/{booking_id}", response_model=UpdateDeliveryStatus, status_code = 200)
 async def update_booking(
     booking_id: Annotated[int ,Path(discription="Add the booking ID , which is int" , examples="3")],
-    # updated_booking: Waste,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
