@@ -26,11 +26,11 @@ class EmailData:
 
 
 
-# def create_access_token(subject: str | Any, expires_delta: timedelta) -> str: #subject what we want to encode, expires_delta when the token will expire
-#     expire = datetime.utcnow() + expires_delta
-#     to_encode = {"exp": expire, "sub": str(subject)}
-#     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
-#     return encoded_jwt
+def create_access_token(subject: str | Any, expires_delta: timedelta) -> str: #subject what we want to encode, expires_delta when the token will expire
+    expire = datetime.utcnow() + expires_delta
+    to_encode = {"exp": expire, "sub": str(subject)}
+    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+    return encoded_jwt
 
 def create_token(subject: str | Any, type_ops: str):
     if type_ops == "verify":
