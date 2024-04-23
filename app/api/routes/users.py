@@ -34,7 +34,7 @@ async def register(
             detail="User with the email already exists"
         )
     
-    db_username =db.query(User).filter(User.display_name == user.display_name).first()
+    db_username =db.query(User).filter(User.first_name == user.first_name and User.last_name == user.last_name).first()
       
     if db_username is not None:
         return  HTTPException(status_code = status.HTTP_400_BAD_REQUEST, 
@@ -70,27 +70,28 @@ async def startup_event():
 
 
 @router.get("/profile")
-def user_profile (request: Request, current_user: int = Depends(get_current_user), db: Session = Depends(get_db)):
-    headers = request.headers
+def user_profile ( current_user: int = Depends(get_current_user), db: Session = Depends(get_db)):
     
     if not current_user:
         raise HTTPException(status_code=401, detail="Unauthorized")
     
     user = current_user.model_dump()
 
-
-    # user = db.get(User, current_user.user_id)
     if not user:   
         raise HTTPException(status_code=404, detail="User not found")
     return jsonable_encoder(user)
 
 
 @router.patch("/profile")
-def user_profile(user_data: UserUpdate, current_user: int = Depends(get_current_user), db: Session = Depends(get_db)):
+def user_profile(
+    user_data: UserUpdate, 
+    current_user: int = Depends(get_current_user),
+    db: Session = Depends(get_db)
+    ):
+    
     if not current_user:
-    # updated_user = update_user(db, user_id, user_data)
-    # if not updated_user:
         raise HTTPException(status_code=404, detail="User not authenticated")
+    
     user_data = User(**user_data.model_dump())
     db.add(user_data)
     db.commit()

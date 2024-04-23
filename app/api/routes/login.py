@@ -35,7 +35,8 @@ async def login(
         access_token=create_access_token(
             user.id, expires_delta=access_token_expires
         ),
-        display_name=user.display_name,
+        first_name=user.first_name,
+        last_name = user.last_name,
         email=user.email,
         phone=user.phone_number,
 

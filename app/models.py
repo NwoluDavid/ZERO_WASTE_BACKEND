@@ -12,7 +12,8 @@ import uuid
 
 
 class UserCreate(SQLModel):
-    display_name:str = Field(min_length=3, max_length=50, description="Name of the User",  schema_extra={"examples": ["Jonah"]}, title="Name")  # noqa
+    first_name:str = Field(min_length=3, max_length=50, description="Name of the User",  schema_extra={"examples": ["Jonah"]}, title="Name")
+    last_name:str = Field(min_length=3, max_length=50, description="Name of the User",  schema_extra={"examples": ["Onah"]}, title="Name")# noqa
     email: EmailStr = Field(sa_column=Column("email", VARCHAR, unique=True, index=True), description="Email of the user",schema_extra={'example': "dave@example.com"})
     phone_number: PhoneNumber = Field(description="Phone number of the user", title="Phone Number" ,schema_extra ={"examples":["+2348103896322"]})  # noqa
     password: str = Field(min_length=8, max_length=100, description="Password of the user",title="Password" , schema_extra={'example': "Dante@123"})  # noqa       
@@ -25,8 +26,8 @@ class UserCreate(SQLModel):
 class User(UserCreate, table=True):
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
     waste: list["Waste"] = Relationship(back_populates="user")  
-    is_staff: Optional[bool]= Field(default =True)
-    is_active:Optional[bool]= Field(default=True)
+    is_staff: Optional[bool]= Field(default =False)
+    is_active:Optional[bool]= Field(default=False)
     review: list["Review"] = Relationship(back_populates="user")
     
 
@@ -39,7 +40,8 @@ class UserLogin(SQLModel):
 class Token(SQLModel):
     access_token: str
     token_type: str = "bearer"
-    display_name: str
+    first_name: str
+    last_name: str
     email: str
     phone : str
 
@@ -92,6 +94,7 @@ class Waste(Booking,table=True):
     user_id: uuid.UUID | None = Field(default_factory=uuid.uuid4, foreign_key="user.id")
     user: User | None = Relationship(back_populates="waste")
     order_status:Optional[BookingStatus] = Field(default = "PENDING")
+    delivery_status:Optional[bool]= Field(default=False)
     
 
 class UserUpdate(SQLModel):
@@ -130,3 +133,5 @@ class NewPassword(SQLModel):
 
 class Message(SQLModel):
     message: str
+class UpdateDeliveryStatus(SQLModel):
+    delivery_status: bool

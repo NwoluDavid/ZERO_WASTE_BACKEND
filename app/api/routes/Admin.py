@@ -4,6 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
 from sqlmodel import Session, select
 
+
 from app.deps import get_current_user , get_db
 from app.models import User, UserCreate, UserUpdate
 
@@ -14,9 +15,7 @@ from app.utils import get_password_hash
 from sqlalchemy.exc import IntegrityError
 
 from fastapi.encoders import jsonable_encoder
-from typing import Annotated
-
-import uuid
+from fastapi.responses import JSONResponse
 
 
 mapper_registry = registry()
@@ -59,8 +58,14 @@ async def read_users(
             detail="Only staff members can access this route.",
         )
     users = session.exec(select(User).offset(skip).limit(limit)).all()
-    return users
-
+    users= jsonable_encoder(users)
+    return JSONResponse(
+    status_code=200,
+    content={
+        "message": "list of users",
+        "users":users
+    })
+    
 
 
 @router.post(
@@ -71,7 +76,7 @@ async def read_users(
     response_description="User created successfully.",
 )
 async def create_user(
-    user_create: UserCreate,
+    user: UserCreate,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -91,23 +96,41 @@ async def create_user(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only staff members can access this route.",
         )
-    try:
-        user_create = get_password_hash(user_create.password)
-        user = User(**user_create.model_dump())
-        db.add(user)
-        db.commit()
-        db.refresh(user)
-     
-    except IntegrityError as e:
-        error_message ="Email already exists"
-        raise HTTPException(status_code=409, detail=error_message)
-    except Exception as e:
     
+    db_email =db.query(User).filter(User.email ==user.email).first()
+    
+    if db_email is not None:
+        return  HTTPException(status_code = status.HTTP_400_BAD_REQUEST, 
+            detail="User with the email already exists"
+        )
+    
+    db_username =db.query(User).filter(User.first_name == user.first_name and User.last_name == user.last_name).first()
+      
+    if db_username is not None:
+        return  HTTPException(status_code = status.HTTP_400_BAD_REQUEST, 
+            detail="User with the email already exists"
+        )
+            
+    
+    try:
+        #hash the password 
+        user.password = get_password_hash(user.password)
+        
+        new_user =User(**user.model_dump())
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
+        
+        
+    # except IntegrityError as e:
+    #     error_message ="Email already exists"
+    #     raise HTTPException(status_code=409, detail=error_message)
+    except Exception as e:
         error_message = "An error occurred while creating the user."    
         raise HTTPException(status_code=500, detail=error_message)
-    # return { status_code= "message": "User created successfully"}    
-    new_user = jsonable_encoder(user)
-    return new_user
+    # return { status_code= "message": "User created successfully"}
+    new_user =jsonable_encoder(new_user)
+    return JSONResponse(status_code =201, content={"data": new_user , "message": "user created successfully"})
 
 
 @router.get(
