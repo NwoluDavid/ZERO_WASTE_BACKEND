@@ -34,23 +34,15 @@ async def register(
     db_email =db.query(User).filter(User.email ==user.email).first()
     
     if db_email is not None:
-        return  HTTPException(status_code = status.HTTP_400_BAD_REQUEST, 
+        raise  HTTPException(status_code = status.HTTP_400_BAD_REQUEST, 
             detail="User with the email already exists"
         )
     
-    db_username =db.query(User).filter(User.first_name == user.first_name and User.last_name == user.last_name).first()
-      
-    if db_username is not None:
-        return  HTTPException(status_code = status.HTTP_400_BAD_REQUEST, 
-            detail="User with the email already exists"
-        )
     token = create_token(subject=user.email, type_ops="verify")
     data = generate_verification_email(email_to=user.email, email= user.email , token=token)
     send_email(email_to=user.email ,subject =data.subject, html_content = data.html_content)
         
     try:
-        
-       
         
         #hash the password 
         user.password = get_password_hash(user.password)
@@ -61,12 +53,10 @@ async def register(
         
         new_user =jsonable_encoder(new_user)
         return JSONResponse(status_code =201, content={"data": new_user , "message": "user created successfully"})
-    except IntegrityError as e:
-        error_message ="Email already exists"
-        raise HTTPException(status_code=409, detail=error_message)
+    
     except Exception as e:
         error_message = "An error occurred while creating the user."   
-        raise HTTPException(status_code=500, detail=error_message)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=error_message)
     
    
    
@@ -174,7 +164,7 @@ async def delete_user_profile(
     return JSONResponse(
         status_code=200,
         content={
-            "message": "userdeleted successfully",
+            "message": "user deleted successfully",
             "deleted_user": user
         })
 
