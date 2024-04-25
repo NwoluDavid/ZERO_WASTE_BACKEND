@@ -1,17 +1,24 @@
 
 from datetime import datetime, timedelta
 from typing import Any
+
 from app.config import settings
 from jose import jwt, JWTError
+
 from passlib.context import CryptContext
 from app.models import TokenData
+
 from pydantic import ValidationError
 from fastapi import HTTPException, status, Depends
+
 from dataclasses import dataclass
 from jinja2 import Template
-from pathlib import Path
-import emails 
 
+from pathlib import Path
+import emails
+ 
+import smtplib, ssl
+from email.message import EmailMessage
 
 
 
@@ -145,3 +152,32 @@ def create_reset_password_token(email:str):
     return token
 
     
+def send_email(emai_to:str, subject:str , html_content:str):
+    
+    port = 587
+    smtp_server = "smtp.zeptomail.com"
+    username="emailapikey"
+    password = "wSsVR61+rxPyB60uzmD+dr86mQtRDg7xFkV82Vvw73H6Fq3H9sczkRecDQ7zFPQfE2JrRjsUrLkhmkgH2jFbit0rz1hWCyiF9mqRe1U4J3x17qnvhDzDV2pUkRWML4IKwQVqnWRlGs8h+g=="
+    message = "Test email sent successfully."
+    msg = EmailMessage()
+    msg['Subject'] = "Test Email"
+    msg['From'] = "noreply@zerowastebin.com.ng"
+    msg['To'] = "nwoludave@gmail.com"
+    msg.set_content(message)
+    try:
+        if port == 465:
+            context = ssl.create_default_context()
+            with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+                server.login(username, password)
+                server.send_message(msg)
+        elif port == 587:
+            with smtplib.SMTP(smtp_server, port) as server:
+                server.starttls()
+                server.login(username, password)
+                server.send_message(msg)
+        else:
+            print ("use 465 / 587 as port value")
+            exit()
+        print ("successfully sent")
+    except Exception as e:
+        print (e)

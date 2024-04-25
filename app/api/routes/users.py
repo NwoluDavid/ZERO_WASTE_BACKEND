@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Depends, HTTPException, status, Request  
 from sqlmodel import Session
 
 from app.deps import get_db, get_current_user
@@ -12,6 +12,8 @@ from sqlalchemy.exc import IntegrityError
 
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
+
+from app.crud import get_user_by_email
 
 
 
@@ -43,6 +45,9 @@ async def register(
      
         
     try:
+        
+        user
+        
         #hash the password 
         user.password = get_password_hash(user.password)
         
@@ -64,6 +69,30 @@ async def register(
     return JSONResponse(status_code =201, content={"data": new_user , "message": "user created successfully"})
 
 
+
+@router.post("/verify-email/{token}")
+async def verify_email(token: str, db: Annotated[Session, Depends(get_db)]):
+    # verify token
+    email = verify_token(token=token)
+
+    if not email:
+        raise HTTPException(status_code=400, detail="Invalid token")
+
+    user = get_user_by_email(session=db, email=email)
+
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="The user with this email does not exist in the system.",
+        )
+
+    user.is_active = True
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return JSONResponse(status_code=201, content={"message": "Email verified"})
+
+
 @router.on_event("startup")
 async def startup_event():
     mapper_registry.configure()
@@ -81,6 +110,27 @@ def user_profile ( current_user: int = Depends(get_current_user), db: Session = 
         raise HTTPException(status_code=404, detail="User not found")
     return jsonable_encoder(user)
 
+@router.post("/verify-email/{token}")
+async def verify_email(token:str , db : Annotated[Session, Depends(get_db)]):
+    
+    email = verify_token(token = token)
+    
+    if not email:
+        raise HTTPException(status_code =400, detail ="Invalid token")
+    
+    user =await get_user_by_email(email = email)
+    
+    if not user:
+        raise HTTPException(
+            status_code =500,
+            detail ="The user with this email does not exist in the system"
+        )
+    
+    # Making the user to be active.
+    
+    user.is_active = True
+    return JSONResponse(status_code =201, content={"message": "Email verified" , "user":user})
+   
 
 @router.patch("/profile")
 def user_profile(

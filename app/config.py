@@ -54,6 +54,9 @@ settings = Settings()
 
 
 
+
+
+
 # app.config['MAIL_SERVER']='sandbox.smtp.mailtrap.io'
 # app.config['MAIL_PORT'] = 2525
 # app.config['MAIL_USERNAME'] = '8217a05e047674'
