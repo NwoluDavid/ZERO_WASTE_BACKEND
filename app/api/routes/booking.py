@@ -1,12 +1,15 @@
-from fastapi import APIRouter, Depends, HTTPException, status,Query , Path
+from fastapi import APIRouter, Depends, HTTPException,Path
 from fastapi.security import OAuth2PasswordBearer
+
 from sqlmodel import Session
 from app.deps import get_db, get_current_user
-from app.models import Booking, Waste, User
+
+from app.models import Booking, Waste, User,UpdateDeliveryStatus
 from typing import List
+
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
-import uuid
+
 from typing import Annotated
 
 router = APIRouter()
@@ -39,7 +42,15 @@ async def booking(
     db.commit()
     db.refresh(waste_create)
     
-    return waste_create
+    waste_create = jsonable_encoder(waste_create)
+    
+    return JSONResponse(
+    status_code=200,
+    content={
+        "message": "booking created successfully",
+        "booking":waste_create
+    })
+    
 
 @router.get("/booking", response_model=List[Waste], status_code=200)
 async def get_bookings_by_user(
@@ -50,10 +61,12 @@ async def get_bookings_by_user(
     """
     if not current_user:
         raise HTTPException(status_code=401, detail="Unauthorized")
-
     user_bookings = db.query(Waste).filter(Waste.user_id == current_user.id).all()
-
-    return user_bookings
+    
+ 
+    user_bookings = jsonable_encoder(user_bookings)
+    return  user_bookings
+   
 
 
 @router.delete("/booking/{booking_id}", status_code=204 )
@@ -93,15 +106,14 @@ async def delete_booking(
 
 
 
-@router.patch("/booking/{booking_id}", response_model=Waste , status_code = 200)
+@router.patch("/booking/{booking_id}", response_model=UpdateDeliveryStatus, status_code = 200)
 async def update_booking(
     booking_id: Annotated[int ,Path(discription="Add the booking ID , which is int" , examples="3")],
-    updated_booking: Booking,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
-    Update a booking by its ID.
+    Update a booking delivery status by its ID.
 
     If the user is not authenticated, returns a 401 Unauthorized error.
     If the booking does not exist, returns a 404 Not Found error.
@@ -116,16 +128,24 @@ async def update_booking(
     if booking.user_id != current_user.id:
         raise HTTPException(status_code=403, detail="Unauthorized to delete this booking")
     
-    
+    booking.delivery_status = True
     
     # Update the booking with the new data
-    for field, value in updated_booking.dict().items():
+    for field, value in booking.dict().items():
         setattr(booking, field, value)
     
     db.commit()
     db.refresh(booking)
     
-    return booking
+    booking = jsonable_encoder(booking)
+    
+    booking
+    return JSONResponse(
+    status_code=200,
+    content={
+        "message": "booking delivery status updated successfully",
+        "booking":booking
+    })
     
 
 @router.put("/booking/{booking_id}", response_model=Waste , status_code =200)
@@ -160,7 +180,14 @@ async def replace_booking(
     db.commit()
     db.refresh(booking)
     
-    return booking
+    booking = jsonable_encoder(booking)
+    
+    return JSONResponse(
+    status_code=200,
+    content={
+        "message": "bookimg updated successfully",
+        "created_review": booking
+    })
 
 
 @router.on_event("startup")

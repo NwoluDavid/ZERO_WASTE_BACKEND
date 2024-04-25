@@ -1,8 +1,8 @@
-"""updated waste model
+"""updated user and waste model
 
-Revision ID: 621e7cd8c93a
-Revises: e1c27b1aa194
-Create Date: 2024-04-21 15:27:30.011202
+Revision ID: 350c30a61f0f
+Revises: 
+Create Date: 2024-04-23 01:21:27.256708
 
 """
 from typing import Sequence, Union
@@ -14,8 +14,8 @@ import sqlmodel
 
 
 # revision identifiers, used by Alembic.
-revision: str = '621e7cd8c93a'
-down_revision: Union[str, None] = 'e1c27b1aa194'
+revision: str = '350c30a61f0f'
+down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

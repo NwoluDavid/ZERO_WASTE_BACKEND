@@ -1,11 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException, Query , Path
 from fastapi.responses import JSONResponse
+
 from sqlmodel import Session
 from typing import List
+
 from app.crud import create_review, get_reviews_by_user_id, update_review, delete_review
 from app.deps import get_db, get_current_user
+
 from app.models import Review, User, ReviewBase
 from typing import Annotated
+
 from fastapi.encoders import jsonable_encoder
 
 router = APIRouter()
@@ -61,9 +65,16 @@ async def create_review(
     db.commit()
     db.refresh(review)
     
-    review = review.model_dump()
+    review  = jsonable_encoder(review )
     
-    return review
+    return JSONResponse(
+        status_code=200,
+        content={
+            "message": "review created successfully",
+            "created_review": review 
+        })
+    
+ 
     
 # Read reviews made by the current user
 @router.get("/review/", response_model=List[Review], status_code=200)
@@ -125,9 +136,18 @@ def review_route(
     
     db.commit()
     db.refresh(review)
+
+    review  = jsonable_encoder(review )
+
+    return JSONResponse(
+        status_code=200,
+        content={
+            "message": "review updated successfully",
+            "updated_review": review 
+        })
     
     
-    return review
+  
 
 
 
