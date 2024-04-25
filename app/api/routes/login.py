@@ -77,14 +77,3 @@ async def login_verify_email(email:str , db: Annotated[Session, Depends(get_db)]
             
         
     
-   
-#  some code we might need later
-
-    # "User": UserOutput(
-    #     display_name=user.display_name,
-    #     email=user.email,
-    #     phone=user.phone_number,),
-        
-    # "Token": Token(
-    # access_token=create_access_token(
-    #     user.id, expires_delta=access_token_expires)
