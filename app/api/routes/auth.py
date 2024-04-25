@@ -1,15 +1,16 @@
 from fastapi import APIRouter, status
 from fastapi import APIRouter, Depends, HTTPException
+
 from sqlmodel import Session
 from typing import List
-from app.config import settings
-from app.crud import create_review, get_reviews_by_user_id, update_review, delete_review
-from app.deps import get_db, get_current_user
-from app.models import Review, User, ReviewBase,NewPassword,Message
+
+from app.deps import get_db
+from app.models import NewPassword,Message
+
 from app.models import ForgetPasswordRequest, ResetForgetPassword
 from fastapi import BackgroundTasks
+
 from app.utils import (
-    create_reset_password_token,
     send_email,
     verify_token,
     get_password_hash,
@@ -19,6 +20,7 @@ from app.utils import (
 from app.crud import get_user_by_email
 from fastapi_mail import FastMail, MessageSchema, MessageType
 from starlette.responses import JSONResponse
+
 from starlette.background import BackgroundTasks
 from typing import Annotated, Any
 
@@ -62,13 +64,9 @@ async def recover_password(email: str, db: Annotated[Session, Depends(get_db)]):
     email_data = generate_reset_password_email(
         email_to=user.email, email=email, token=password_reset_token
     )
-
-    send_email(
-        email_to=user.email,
-        subject=email_data.subject,
-        html_content=email_data.html_content,
-    )
+    send_email(email_to=user.email ,subject =email_data.subject, html_content = email_data.html_content)
     return Message(message="Password recovery email sent")
+
 
 @router.post("/reset-password/")
 def reset_password(
@@ -87,11 +85,17 @@ def reset_password(
             detail="The user with this email does not exist in the system.",
         )
     elif not user.is_active:
-        raise HTTPException(status_code=400, detail="Inactive user")
+        raise HTTPException(status_code=400, detail="User is not Verified")
+    
     hashed_password = get_password_hash(password=body.new_password)
     user.password = hashed_password
-    db.add(user)
+    
+    for field, value in user.dict().items():
+        setattr(user, field, value)
+    
     db.commit()
+    db.refresh(user)
+    
     return Message(message="Password updated successfully")
 
 

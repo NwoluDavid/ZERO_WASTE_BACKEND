@@ -44,12 +44,15 @@ class Settings(BaseSettings):
     SMTP_TLS: bool = True
     SMTP_SSL: bool = False
     SMTP_PORT: int = 2525
-    SMTP_HOST: str = 'sandbox.smtp.mailtrap.io'
-    SMTP_USER: str = '8217a05e047674'
-    SMTP_PASSWORD: str =  '0c844a6f18d66c'
+    SMTP_HOST: str 
+    SMTP_USER: str 
+    SMTP_PASSWORD: str 
 
 
 settings = Settings()
+
+
+
 
 
 

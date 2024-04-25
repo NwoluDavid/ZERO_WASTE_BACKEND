@@ -1,17 +1,24 @@
 
 from datetime import datetime, timedelta
 from typing import Any
+
 from app.config import settings
 from jose import jwt, JWTError
+
 from passlib.context import CryptContext
 from app.models import TokenData
+
 from pydantic import ValidationError
 from fastapi import HTTPException, status, Depends
+
 from dataclasses import dataclass
 from jinja2 import Template
-from pathlib import Path
-import emails 
 
+from pathlib import Path
+import emails
+ 
+import smtplib, ssl
+from email.message import EmailMessage
 
 
 
@@ -120,21 +127,21 @@ def generate_reset_password_email(email_to: str, email: str, token: str):
     )
     return EmailData(html_content=html_content, subject=subject)
 
-def send_email(email_to: str, subject: str, html_content: str):
-    message = emails.Message(
-        subject=subject, html=html_content, mail_from=settings.EMAILS_FROM_NAME
-    )
-    smtp_options = {
-        "host": settings.SMTP_HOST,
-        "port": settings.SMTP_PORT,
-        "user": settings.SMTP_USER,
-        "password": settings.SMTP_PASSWORD,
-    }
-    if settings.SMTP_TLS:
-        smtp_options["tls"] = True
-    elif settings.SMTP_SSL:
-        smtp_options["ssl"] = True
-    response = message.send(to=email_to, smtp=smtp_options)
+# def send_email(email_to: str, subject: str, html_content: str):
+#     message = emails.Message(
+#         subject=subject, html=html_content, mail_from=settings.EMAILS_FROM_NAME
+#     )
+#     smtp_options = {
+#         "host": settings.SMTP_HOST,
+#         "port": settings.SMTP_PORT,
+#         "user": settings.SMTP_USER,
+#         "password": settings.SMTP_PASSWORD,
+#     }
+#     if settings.SMTP_TLS:
+#         smtp_options["tls"] = True
+#     elif settings.SMTP_SSL:
+#         smtp_options["ssl"] = True
+#     response = message.send(to=email_to, smtp=smtp_options)
 
 
 
@@ -145,3 +152,32 @@ def create_reset_password_token(email:str):
     return token
 
     
+def send_email(email_to:str, subject:str , html_content:str):
+    
+    port = 465
+    smtp_server = settings.SMTP_HOST
+    username=settings.SMTP_USER
+    password = settings.SMTP_PASSWORD
+    message = html_content
+    msg = EmailMessage()
+    msg['Subject'] = subject
+    msg['From'] = "noreply@zerowastebin.com.ng"
+    msg['To'] = email_to
+    msg.add_alternative(message, subtype="html")
+    try:
+        if port == 465:
+            context = ssl.create_default_context()
+            with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+                server.login(username, password)
+                server.send_message(msg)
+        elif port == 587:
+            with smtplib.SMTP(smtp_server, port) as server:
+                server.starttls()
+                server.login(username, password)
+                server.send_message(msg)
+        else:
+            print ("use 465 / 587 as port value")
+            exit()
+        print ("successfully sent")
+    except Exception as e:
+        print (e)
