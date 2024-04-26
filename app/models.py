@@ -95,6 +95,8 @@ class Waste(Booking,table=True):
     user: User | None = Relationship(back_populates="waste")
     order_status:Optional[BookingStatus] = Field(default = "PENDING")
     delivery_status:Optional[bool]= Field(default=False)
+    payment_status: bool = Field(default=False)
+    
     
 
 class UserUpdate(SQLModel):

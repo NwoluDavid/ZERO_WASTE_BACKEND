@@ -20,7 +20,7 @@ import emails
 import smtplib, ssl
 from email.message import EmailMessage
 
-
+import requests
 
 
 
@@ -154,7 +154,7 @@ def create_reset_password_token(email:str):
     
 def send_email(email_to:str, subject:str , html_content:str):
     
-    port = 465
+    port = 587
     smtp_server = settings.SMTP_HOST
     username=settings.SMTP_USER
     password = settings.SMTP_PASSWORD
@@ -165,12 +165,12 @@ def send_email(email_to:str, subject:str , html_content:str):
     msg['To'] = email_to
     msg.add_alternative(message, subtype="html")
     try:
-        if port == 465:
+        if port == 587:
             context = ssl.create_default_context()
             with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
                 server.login(username, password)
                 server.send_message(msg)
-        elif port == 587:
+        elif port == 465:
             with smtplib.SMTP(smtp_server, port) as server:
                 server.starttls()
                 server.login(username, password)
@@ -181,3 +181,23 @@ def send_email(email_to:str, subject:str , html_content:str):
         print ("successfully sent")
     except Exception as e:
         print (e)
+        
+        
+def verify_payment(ref_id:str):
+    paystack_url = settings.PAYMENT_URL
+    url_path = paystack_url + f"transaction/verify/{ref_id}"
+    headers = {
+        "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
+        "Content-Type": "application/json",
+    }
+    response = requests.get(url_path, headers=headers)
+    
+    if response.status_code == 200:
+        response_data = response.json()
+        return response_data['status'], response_data['data']
+    
+    response_data = response.json()
+    return response_data['status'], response_data['data'] 
+
+
+

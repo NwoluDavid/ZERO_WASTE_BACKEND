@@ -48,7 +48,8 @@ class Settings(BaseSettings):
     SMTP_USER: str = "emailapikey"
     SMTP_PASSWORD: str = "wSsVR61+rxPyB60uzmD+dr86mQtRDg7xFkV82Vvw73H6Fq3H9sczkRecDQ7zFPQfE2JrRjsUrLkhmkgH2jFbit0rz1hWCyiF9mqRe1U4J3x17qnvhDzDV2pUkRWML4IKwQVqnWRlGs8h+g=="
 
-
+    PAYMENT_URL: str = "https://api.paystack.co/"
+    PAYSTACK_SECRET_KEY: str = "sk_test_7afe76686be24caae66ab33e6a442af57d3d63c8"
 settings = Settings()
 
 

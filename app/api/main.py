@@ -9,7 +9,7 @@ import app.crud
 from datetime import timedelta
 from app.config import settings
 from fastapi import APIRouter
-from .routes import items, login, users, test_token, reviews ,booking, auth ,Admin
+from .routes import items, login, users, test_token, reviews ,booking, auth ,Admin,payment
 from sqlalchemy.orm import registry
 
 
@@ -26,6 +26,7 @@ api_router.include_router(booking.router, prefix="/bookings", tags=["Booking"])
 api_router.include_router(reviews.router, prefix="/reviews", tags=["Reviews"])
 api_router.include_router(items.router, prefix="/items", tags=["Items"])
 api_router.include_router(test_token.router, prefix="/utils", tags=["Utils"])
+api_router.include_router(payment.router, prefix="/payment", tags=["payment"])
 
 
 # api_router.include_router(reviews.router, prefix="/reviews", tags=["Reviews"])
