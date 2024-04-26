@@ -1,12 +1,15 @@
 from sqlmodel import Session
 from app.db import engine
+
 from typing import Generator, Annotated
 from app.config import settings
-from fastapi import Depends, HTTPException, status
+
+from fastapi import Depends, HTTPException
 from app.utils import verify_token_access
+
 from app.models import User
 from fastapi.security import OAuth2PasswordBearer
-from typing import Optional
+
 
 
 

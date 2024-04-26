@@ -1,11 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 from app.api.main import api_router
 from sqlmodel import SQLModel
+
 from app.db import engine
 from app.config import settings
+
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import registry
+
 
 app = FastAPI(title="ZERO WASTE")
 app.include_router(api_router, prefix=settings.API_V1_STR)

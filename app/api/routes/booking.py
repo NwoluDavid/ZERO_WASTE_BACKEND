@@ -45,7 +45,7 @@ async def booking(
     waste_create = jsonable_encoder(waste_create)
     
     return JSONResponse(
-    status_code=200,
+    status_code=201,
     content={
         "message": "booking created successfully",
         "booking":waste_create
