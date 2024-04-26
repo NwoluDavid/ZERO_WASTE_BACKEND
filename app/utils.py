@@ -9,16 +9,17 @@ from passlib.context import CryptContext
 from app.models import TokenData
 
 from pydantic import ValidationError
-from fastapi import HTTPException, status, Depends
-
+from fastapi import HTTPException, status, Depends, UploadFile
 from dataclasses import dataclass
 from jinja2 import Template
 
 from pathlib import Path
-import emails
- 
-import smtplib, ssl
-from email.message import EmailMessage
+import emails 
+import os
+import uuid
+from PIL import Image
+
+
 
 
 
@@ -151,33 +152,27 @@ def create_reset_password_token(email:str):
     token = jwt.encode(data , settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return token
 
+
+def get_image_url(image_filename: str):
+    return f"/profile_pictures/{image_filename}"
+
+def validate_picture(picture: UploadFile):
+    if not picture.filename.lower().endswith(('.jpg', '.jpeg', '.png')):
+        raise HTTPException(status_code=400, detail="Please upload a picture in JPEG, JPG or PNG format.")
+
+def save_profile_picture(picture: UploadFile):
+    contents = picture.file.read()
+    if len(contents) > 10 * 1024 * 1024:  # 10 MB limit
+        raise HTTPException(status_code=400, detail="File size exceeds limit (10MB).")
+
+    file_extension = picture.filename.split(".")[-1]
+    unique_filename = f"{uuid.uuid4()}.{file_extension}"
+    upload_folder = "./profile_pictures"
+    file_path = os.path.join(upload_folder, unique_filename)
+
+    os.makedirs(upload_folder, exist_ok=True)
+    with open(file_path, "wb") as file_object:
+        file_object.write(contents)
     
-def send_email(email_to:str, subject:str , html_content:str):
+    return file_path 
     
-    port = 465
-    smtp_server = settings.SMTP_HOST
-    username=settings.SMTP_USER
-    password = settings.SMTP_PASSWORD
-    message = html_content
-    msg = EmailMessage()
-    msg['Subject'] = subject
-    msg['From'] = "noreply@zerowastebin.com.ng"
-    msg['To'] = email_to
-    msg.add_alternative(message, subtype="html")
-    try:
-        if port == 465:
-            context = ssl.create_default_context()
-            with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
-                server.login(username, password)
-                server.send_message(msg)
-        elif port == 587:
-            with smtplib.SMTP(smtp_server, port) as server:
-                server.starttls()
-                server.login(username, password)
-                server.send_message(msg)
-        else:
-            print ("use 465 / 587 as port value")
-            exit()
-        print ("successfully sent")
-    except Exception as e:
-        print (e)

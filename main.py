@@ -6,6 +6,7 @@ from app.db import engine
 from app.config import settings
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import registry
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI(title="ZERO WASTE")
 app.include_router(api_router, prefix=settings.API_V1_STR)
@@ -24,3 +25,4 @@ def on_startup():
     SQLModel.metadata.create_all(engine)
     mapper_registry.configure()
 
+app.mount("/profile_pictures", StaticFiles(directory="profile_pictures"), name="profile_pictures")

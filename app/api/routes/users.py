@@ -1,23 +1,20 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request  
-from sqlmodel import Session
-
+from fastapi import APIRouter, Depends, HTTPException, status, Request
+from sqlmodel import Session, select
 from app.deps import get_db, get_current_user
 from app.models import UserCreate, User, UserUpdate
-
 from typing import Annotated, Any
-from app.utils import get_password_hash
-
+from app.utils import get_password_hash, save_profile_picture, validate_picture
 from sqlalchemy.orm import registry
 from sqlalchemy.exc import IntegrityError
-
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from fastapi.encoders import jsonable_encoder
+from fastapi import File, UploadFile
+from botocore.client import Config
+from fastapi import Response
 
-from app.crud import get_user_by_email
-from app.utils import create_token,send_email , generate_verification_email,verify_token
 
-
-
+from app.models import TokenData
+from app.config import settings
 
 
 mapper_registry = registry()
@@ -159,20 +156,51 @@ async def delete_user_profile(
     
     db.delete(user)
     db.commit()
-    
-    user = jsonable_encoder(user)
-    return JSONResponse(
-        status_code=200,
-        content={
-            "message": "user deleted successfully",
-            "deleted_user": user
-        })
+    db.refresh(user_data)
+    return user_data
+@router.delete("/profile")
+def user_profile(user_data: UserUpdate, current_user: int = Depends(get_current_user), db: Session = Depends(get_db)):
+    if not  current_user:
+        raise HTTPException(status_code=404, detail="User not authenticated")
+    # user_data = User(**user_data.model_dump())
+
+    # deleted_user = delete_user(db, current_user.user_id)
+    # if not deleted_user:
+    #     raise HTTPException(status_code=404, detail="User not found")
+    return {"message": "User deleted successfully"}
 
 
 
+@router.post("/user/profile-picture")
+def upload_profile_picture(
+    profile_picture: UploadFile = File(None),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    statement = select(User).where(User.id == current_user.id)
+    db_user = db.exec(statement).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    changes_made = False
+    if profile_picture:
+        validate_picture(profile_picture)
+        changes_made = True
+        db_user.profile_picture = save_profile_picture(profile_picture)
+        
+    if changes_made:
+        db.commit()
+        return {"message": "User details updated successfully"}
+    else:
+        return {"message": "No changes made"}
 
+@router.get("/user/profile-picture")
+def get_profile_picture(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    statement = select(User.profile_picture).where(User.id == current_user.id)
+    profile_picture = db.execute(statement).scalar()
+    if not profile_picture:
+        raise HTTPException(status_code=404, detail="Profile picture not found")
+    return FileResponse(profile_picture)
 
-
-@router.on_event("startup")
-async def startup_event():
-    mapper_registry.configure()
