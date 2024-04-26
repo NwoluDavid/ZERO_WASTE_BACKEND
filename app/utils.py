@@ -153,30 +153,6 @@ def create_reset_password_token(email:str):
     return token
 
 
-# def save_profile_picture(profile_picture: UploadFile, user_id: int):
-#     # Validate picture type
-#     allowed_types = ["jpeg", "png", "jpg"]
-#     file_extension = profile_picture.filename.split(".")[-1]
-#     if file_extension.lower() not in allowed_types:
-#         raise HTTPException(status_code=400, detail="Unsupported picture format")
-
-#     # Create directory if it doesn't exist
-#     directory = os.path.join("profile_pictures", str(user_id))
-#     os.makedirs(directory, exist_ok=True)
-
-#     # Save the profile picture to the file directory
-#     file_path = os.path.join(directory, profile_picture.filename)
-#     with open(file_path, "wb") as f:
-#         f.write(profile_picture.file.read())
-
-#     # Validate and resize the image
-#     with Image.open(file_path) as img:
-#         img.verify()  # Verify image integrity
-#         img.thumbnail((300, 300))  # Resize image to max size (300x300)
-#         img.save(file_path)  # Save the resized image
-
-#     return file_path
-
 def get_image_url(image_filename: str):
     return f"/profile_pictures/{image_filename}"
 
