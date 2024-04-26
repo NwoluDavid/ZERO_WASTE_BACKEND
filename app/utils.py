@@ -6,11 +6,15 @@ from jose import jwt, JWTError
 from passlib.context import CryptContext
 from app.models import TokenData
 from pydantic import ValidationError
-from fastapi import HTTPException, status, Depends
+from fastapi import HTTPException, status, Depends, UploadFile
 from dataclasses import dataclass
 from jinja2 import Template
 from pathlib import Path
 import emails 
+import os
+import uuid
+from PIL import Image
+
 
 
 
@@ -144,4 +148,51 @@ def create_reset_password_token(email:str):
     token = jwt.encode(data , settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return token
 
+
+# def save_profile_picture(profile_picture: UploadFile, user_id: int):
+#     # Validate picture type
+#     allowed_types = ["jpeg", "png", "jpg"]
+#     file_extension = profile_picture.filename.split(".")[-1]
+#     if file_extension.lower() not in allowed_types:
+#         raise HTTPException(status_code=400, detail="Unsupported picture format")
+
+#     # Create directory if it doesn't exist
+#     directory = os.path.join("profile_pictures", str(user_id))
+#     os.makedirs(directory, exist_ok=True)
+
+#     # Save the profile picture to the file directory
+#     file_path = os.path.join(directory, profile_picture.filename)
+#     with open(file_path, "wb") as f:
+#         f.write(profile_picture.file.read())
+
+#     # Validate and resize the image
+#     with Image.open(file_path) as img:
+#         img.verify()  # Verify image integrity
+#         img.thumbnail((300, 300))  # Resize image to max size (300x300)
+#         img.save(file_path)  # Save the resized image
+
+#     return file_path
+
+def get_image_url(image_filename: str):
+    return f"/profile_pictures/{image_filename}"
+
+def validate_picture(picture: UploadFile):
+    if not picture.filename.lower().endswith(('.jpg', '.jpeg', '.png')):
+        raise HTTPException(status_code=400, detail="Please upload a picture in JPEG, JPG or PNG format.")
+
+def save_profile_picture(picture: UploadFile):
+    contents = picture.file.read()
+    if len(contents) > 10 * 1024 * 1024:  # 10 MB limit
+        raise HTTPException(status_code=400, detail="File size exceeds limit (10MB).")
+
+    file_extension = picture.filename.split(".")[-1]
+    unique_filename = f"{uuid.uuid4()}.{file_extension}"
+    upload_folder = "./profile_pictures"
+    file_path = os.path.join(upload_folder, unique_filename)
+
+    os.makedirs(upload_folder, exist_ok=True)
+    with open(file_path, "wb") as file_object:
+        file_object.write(contents)
+    
+    return file_path 
     
