@@ -44,9 +44,9 @@ class Settings(BaseSettings):
     SMTP_TLS: bool = True
     SMTP_SSL: bool = False
     SMTP_PORT: int = 2525
-    SMTP_HOST: str 
-    SMTP_USER: str 
-    SMTP_PASSWORD: str 
+    SMTP_HOST: str = "smtp.zeptomail.com"
+    SMTP_USER: str = "emailapikey"
+    SMTP_PASSWORD: str = "wSsVR61+rxPyB60uzmD+dr86mQtRDg7xFkV82Vvw73H6Fq3H9sczkRecDQ7zFPQfE2JrRjsUrLkhmkgH2jFbit0rz1hWCyiF9mqRe1U4J3x17qnvhDzDV2pUkRWML4IKwQVqnWRlGs8h+g=="
 
 
 settings = Settings()
