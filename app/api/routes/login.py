@@ -54,15 +54,11 @@ async def login(
 
 @router.post("/login/{email}")
 async def login_verify_email(email:str , db: Annotated[Session, Depends(get_db)]):
-    user= get_user_by_email(session=db, email = email)
+    user = db.query(User).filter(User.email == email).first()
     
     """"This route allows the user to still verify his email , when logged in.
     note a user is still allowed to login when he/she registers.
     """
-    if user is None:
-        return  HTTPException(status_code = status.HTTP_400_BAD_REQUEST, 
-            detail="User with the email already exists"
-        )
         
     if user.is_active:
         return  HTTPException(status_code = status.HTTP_400_BAD_REQUEST, 

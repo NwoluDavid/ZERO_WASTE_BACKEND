@@ -159,6 +159,7 @@ async def delete_user_profile(
     
     db.delete(user)
     db.commit()
+    db.refresh(user)
     
     user = jsonable_encoder(user)
     return JSONResponse(
