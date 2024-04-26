@@ -1,0 +1,5 @@
+-- database: /home/david/ZERO_WASTE_BACKEND/database.sqlite
+-- Use the ▷ button in the top right corner to run the entire file.
+DELETE FROM user
+WHERE
+    first_name == "daniel";
