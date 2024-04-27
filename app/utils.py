@@ -1,4 +1,3 @@
-
 from datetime import datetime, timedelta
 from typing import Any
 
@@ -15,12 +14,15 @@ from dataclasses import dataclass
 from jinja2 import Template
 
 from pathlib import Path
-import emails
  
 import smtplib, ssl
 from email.message import EmailMessage
 
 import requests
+import os
+
+import uuid
+from PIL import Image
 
 
 
@@ -127,24 +129,6 @@ def generate_reset_password_email(email_to: str, email: str, token: str):
     )
     return EmailData(html_content=html_content, subject=subject)
 
-# def send_email(email_to: str, subject: str, html_content: str):
-#     message = emails.Message(
-#         subject=subject, html=html_content, mail_from=settings.EMAILS_FROM_NAME
-#     )
-#     smtp_options = {
-#         "host": settings.SMTP_HOST,
-#         "port": settings.SMTP_PORT,
-#         "user": settings.SMTP_USER,
-#         "password": settings.SMTP_PASSWORD,
-#     }
-#     if settings.SMTP_TLS:
-#         smtp_options["tls"] = True
-#     elif settings.SMTP_SSL:
-#         smtp_options["ssl"] = True
-#     response = message.send(to=email_to, smtp=smtp_options)
-
-
-
 
 def create_reset_password_token(email:str):
     data={"sub":email , "exp":datetime.utcnow() + timedelta(minutes =10)}
@@ -198,6 +182,3 @@ def verify_payment(ref_id:str):
     
     response_data = response.json()
     return response_data['status'], response_data['data'] 
-
-
-
