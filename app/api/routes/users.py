@@ -1,20 +1,28 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlmodel import Session, select
+
 from app.deps import get_db, get_current_user
-from app.models import UserCreate, User, UserUpdate
-from typing import Annotated, Any
-from app.utils import get_password_hash, save_profile_picture, validate_picture
+from app.models import UserCreate, User
+
+from typing import Annotated
+from app.utils import (get_password_hash,
+save_profile_picture,validate_picture,
+create_token,generate_verification_email,send_email,
+verify_token)
+
 from sqlalchemy.orm import registry
 from sqlalchemy.exc import IntegrityError
+
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.encoders import jsonable_encoder
-from fastapi import File, UploadFile
-from botocore.client import Config
-from fastapi import Response
 
+from fastapi import File, UploadFile
+from fastapi import Response
 
 from app.models import TokenData
 from app.config import settings
+
+from app.crud import get_user_by_email
 
 
 mapper_registry = registry()
@@ -156,7 +164,6 @@ async def delete_user_profile(
     
     db.delete(user)
     db.commit()
-<<<<<<< HEAD
     db.refresh(user)
     
     user = jsonable_encoder(user)
@@ -166,20 +173,6 @@ async def delete_user_profile(
             "message": "user deleted successfully",
             "deleted_user": user
         })
-=======
-    db.refresh(user_data)
-    return user_data
-@router.delete("/profile")
-def user_profile(user_data: UserUpdate, current_user: int = Depends(get_current_user), db: Session = Depends(get_db)):
-    if not  current_user:
-        raise HTTPException(status_code=404, detail="User not authenticated")
-    # user_data = User(**user_data.model_dump())
-
-    # deleted_user = delete_user(db, current_user.user_id)
-    # if not deleted_user:
-    #     raise HTTPException(status_code=404, detail="User not found")
-    return {"message": "User deleted successfully"}
->>>>>>> 3f84eb306238187ac28fc9c7fd735a5ac38009d2
 
 
 
