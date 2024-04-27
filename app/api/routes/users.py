@@ -176,7 +176,7 @@ async def delete_user_profile(
 
 
 
-@router.post("/user/profile-picture")
+@router.post("/user/profile-picture" , status_code =200)
 def upload_profile_picture(
     profile_picture: UploadFile = File(None),
     db: Session = Depends(get_db),
@@ -194,7 +194,7 @@ def upload_profile_picture(
         
     if changes_made:
         db.commit()
-        return {"message": "User details updated successfully"}
+        return {"message": "User profile picture uploaded successfully"}
     else:
         return {"message": "No changes made"}
 

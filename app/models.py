@@ -98,7 +98,7 @@ class Waste(Booking,table=True):
     order_status:Optional[BookingStatus] = Field(default = "PENDING")
     delivery_status:Optional[bool]= Field(default=False)
     payment_status: bool = Field(default=False)
-    ref_id: str = Field(default=None)
+
     
     
 
