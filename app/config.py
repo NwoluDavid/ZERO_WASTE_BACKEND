@@ -42,9 +42,9 @@ class Settings(BaseSettings):
     EMAILS_FROM_NAME: str = "ZERO WASTE"
     EMAILS_FROM_EMAIL: str = ""
 
-    SMTP_TLS: bool = True
-    SMTP_SSL: bool = False
-    SMTP_PORT: int = 2525
+    SMTP_TLS: bool
+    SMTP_SSL: bool 
+    SMTP_PORT: int 
     SMTP_HOST: str 
     SMTP_USER: str 
     SMTP_PASSWORD: str 
