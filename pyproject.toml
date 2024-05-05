@@ -7,8 +7,8 @@ license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "3.12.1"
-fastapi = "^0.110.1"
+python = "3.12.2"
+fastapi = "^0.111.0"
 uvicorn = "^0.29.0"
 sqlmodel = "^0.0.16"
 passlib = "^1.7.4"
@@ -28,10 +28,7 @@ uuid = "^1.30"
 bcrypt = "^4.1.2"
 jinja2 = "^3.1.3"
 emails = "^0.6"
-<<<<<<< HEAD
-=======
 boto3 = "^1.34.91"
->>>>>>> 3f84eb306238187ac28fc9c7fd735a5ac38009d2
 pillow = "^10.3.0"
 
 

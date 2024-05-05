@@ -1,9 +1,12 @@
 from sqlmodel import Session, select
 from app.models import User, UserUpdate, Review
+
 from typing import List
 from app.utils import verify_password
+
 from starlette.background import BackgroundTasks
 from pydantic import BaseModel
+
 from fastapi_mail import FastMail, MessageSchema , MessageType
 from jose import jwt , JWTError
 
