@@ -162,7 +162,7 @@ def save_profile_picture(picture: UploadFile):
     
 def send_email(email_to:str, subject:str , html_content:str):
     
-    port = 587
+    port =  587
     smtp_server = settings.SMTP_HOST
     username=settings.SMTP_USER
     password = settings.SMTP_PASSWORD

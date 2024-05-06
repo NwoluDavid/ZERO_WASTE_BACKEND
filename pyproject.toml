@@ -7,8 +7,8 @@ license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "3.12.2"
-fastapi = "^0.111.0"
+python = "3.12.1"
+fastapi = "^0.110.1"
 uvicorn = "^0.29.0"
 sqlmodel = "^0.0.16"
 passlib = "^1.7.4"

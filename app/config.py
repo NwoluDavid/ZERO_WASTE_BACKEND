@@ -13,7 +13,7 @@ from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 def parse_cors(v: Any) -> list[str] | str:
-    if isinstance(v, str) and not v.startswith("[]"):
+    if isinstance(v, str) and not v.startswith("["):
         return [i.strip() for i in v.split(",")]
     elif isinstance(v, list | str):
         return v
@@ -42,9 +42,9 @@ class Settings(BaseSettings):
     EMAILS_FROM_NAME: str = "ZERO WASTE"
     EMAILS_FROM_EMAIL: str = ""
 
-    SMTP_TLS: bool
-    SMTP_SSL: bool 
-    SMTP_PORT: int 
+    SMTP_TLS: bool = True
+    SMTP_SSL: bool = True
+    SMTP_PORT: int =2525
     SMTP_HOST: str 
     SMTP_USER: str 
     SMTP_PASSWORD: str 
