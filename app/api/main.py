@@ -13,7 +13,3 @@ api_router.include_router(reviews.router, prefix="/reviews", tags=["Reviews"])
 api_router.include_router(items.router, prefix="/items", tags=["Items"])
 api_router.include_router(test_token.router, prefix="/utils", tags=["Utils"])
 api_router.include_router(payment.router, prefix="/payment", tags=["payment"])
-
-
-
-

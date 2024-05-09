@@ -9,11 +9,21 @@ from app.config import settings
 
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import registry
+
 from fastapi.staticfiles import StaticFiles
+from app.api.general_pages.route_homepage import general_pages_router
 
+def include_router(app):
+    app.include_router(general_pages_router)
 
-app = FastAPI(title="ZERO WASTE")
-app.include_router(api_router, prefix=settings.API_V1_STR)
+def start_application():
+    app = FastAPI(title="ZERO WASTE")
+    app.include_router(api_router, prefix=settings.API_V1_STR)
+    include_router(app)
+    return app
+ 
+app = start_application()    
+    
 mapper_registry = registry()
 
 app.add_middleware(
