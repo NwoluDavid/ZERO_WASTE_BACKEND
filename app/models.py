@@ -92,7 +92,7 @@ class Booking (SQLModel):
 
 # This model is for booking wastes disposal
 class Waste(Booking,table=True):
-    id:  Optional[int] = Field(default=None, primary_key=True, index =True)
+    id:  Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index =True)
     user_id: uuid.UUID | None = Field(default_factory=uuid.uuid4, foreign_key="user.id")
     user: User | None = Relationship(back_populates="waste")
     order_status:Optional[BookingStatus] = Field(default = "PENDING")
