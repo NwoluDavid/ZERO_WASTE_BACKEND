@@ -157,23 +157,24 @@ async def delete_user_profile(
 
     If the user is not authenticated, returns a 401 Unauthorized error.
     """
-    if not current_user:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    
-    user = db.query(User).filter(User.email == current_user.email).first()
-    
-    db.delete(user)
-    db.commit()
-    db.refresh(user)
-    
-    user = jsonable_encoder(user)
-    return JSONResponse(
-        status_code=200,
-        content={
-            "message": "user deleted successfully",
-            "deleted_user": user
-        })
-
+    try:
+        if not current_user:
+            raise HTTPException(status_code=401, detail="Unauthorized")
+        
+        user = db.query(User).filter(User.email == current_user.email).first().delete()
+        # db.delete(user)
+        db.commit()
+        
+        user = jsonable_encoder(user)
+        return JSONResponse(
+            status_code=200,
+            content={
+                "message": "user deleted successfully",
+                "deleted_user": user
+            })
+    except Exception as e:
+        return e
+        
 
 
 @router.post("/user/profile-picture" , status_code =200)
@@ -182,6 +183,9 @@ def upload_profile_picture(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    """
+    this route is for the user to upload his/her profile pic.
+    """
     statement = select(User).where(User.id == current_user.id)
     db_user = db.exec(statement).first()
     if not db_user:
@@ -198,11 +202,16 @@ def upload_profile_picture(
     else:
         return {"message": "No changes made"}
 
-@router.get("/user/profile-picture")
+@router.get("/user/profile-picture", status_code =200)
 def get_profile_picture(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    """
+    This is route gets the profile pic of 
+    a user and displaces it.
+    
+    """
     statement = select(User.profile_picture).where(User.id == current_user.id)
     profile_picture = db.execute(statement).scalar()
     if not profile_picture:

@@ -71,7 +71,7 @@ async def get_bookings_by_user(
 
 @router.delete("/booking/{booking_id}", status_code=204 )
 async def delete_booking(
-    booking_id: Annotated[int ,Path(discription="Add the booking ID , which is int" , examples="3")],
+    booking_id: Annotated[str,Path(discription="Add the booking ID , which is uuid" , examples="eaec7763-0996-4d39-bca6-547335d9cb18")],
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
@@ -109,7 +109,7 @@ async def delete_booking(
 
 @router.patch("/booking/{booking_id}", response_model=UpdateDeliveryStatus, status_code = 200)
 async def update_booking(
-    booking_id: Annotated[int ,Path(discription="Add the booking ID , which is int" , examples="3")],
+    booking_id: Annotated[str ,Path(discription="Add the booking ID , which is uuid" , examples="eaec7763-0996-4d39-bca6-547335d9cb18")],
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
@@ -151,7 +151,7 @@ async def update_booking(
 
 @router.put("/booking/{booking_id}", response_model=Waste , status_code =200)
 async def replace_booking(
-    booking_id: Annotated[int , Path(discription ="Add the booking id, note id is an int", example="3")],
+    booking_id: Annotated[str, Path(discription ="Add the booking id, note id is an int", example="eaec7763-0996-4d39-bca6-547335d9cb18")],
     updated_booking: Booking,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)

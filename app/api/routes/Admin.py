@@ -179,7 +179,7 @@ async def read_user_by_id(
 )
 async def update_user(
     user_update:UserUpdate,
-    user_id: UUID = Path(..., title="The UUID of the user."),
+    user_id: str = Path(..., title="The UUID of the user."),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -219,7 +219,7 @@ async def update_user(
     response_description="User deleted successfully.",
 )
 async def delete_user(
-    user_id: UUID = Path(..., title="The UUID of the user."),
+    user_id: str = Path(..., title="The UUID of the user."),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
